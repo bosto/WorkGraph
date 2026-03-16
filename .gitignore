@@ -1,0 +1,11 @@
+# Build artifacts
+backend/target/
+frontend/.next/
+frontend/node_modules/
+
+# Environment
+*.env.local
+.env
+
+# OS
+.DS_Store
