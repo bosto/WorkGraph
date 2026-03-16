@@ -117,6 +117,14 @@ async function fetchApi<T>(path: string): Promise<T> {
   return res.json();
 }
 
+function buildQs(params?: Record<string, number | undefined>): string {
+  if (!params) return '';
+  const entries = Object.entries(params)
+    .filter(([, v]) => v !== undefined)
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v!)}`);
+  return entries.length ? '?' + entries.join('&') : '';
+}
+
 async function postApi<T>(path: string, body?: unknown): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
@@ -145,46 +153,26 @@ export const api = {
     repos: (id: number) => fetchApi<RepositoryMapping[]>(`/projects/${id}/repos`),
   },
   jira: {
-    issues: (params?: { staffId?: number; projectId?: number }) => {
-      const qs = params
-        ? '?' + Object.entries(params).filter(([, v]) => v !== undefined).map(([k, v]) => `${k}=${v}`).join('&')
-        : '';
-      return fetchApi<JiraIssue[]>(`/jira/issues${qs}`);
-    },
+    issues: (params?: { staffId?: number; projectId?: number }) =>
+      fetchApi<JiraIssue[]>(`/jira/issues${buildQs(params)}`),
     status: () => fetchApi<SyncStatus>('/jira/status'),
     sync: () => postApi<string>('/jira/sync'),
   },
   github: {
-    prs: (params?: { staffId?: number; projectId?: number }) => {
-      const qs = params
-        ? '?' + Object.entries(params).filter(([, v]) => v !== undefined).map(([k, v]) => `${k}=${v}`).join('&')
-        : '';
-      return fetchApi<GitHubPullRequest[]>(`/github/prs${qs}`);
-    },
-    commits: (params?: { staffId?: number; projectId?: number }) => {
-      const qs = params
-        ? '?' + Object.entries(params).filter(([, v]) => v !== undefined).map(([k, v]) => `${k}=${v}`).join('&')
-        : '';
-      return fetchApi<GitHubCommit[]>(`/github/commits${qs}`);
-    },
+    prs: (params?: { staffId?: number; projectId?: number }) =>
+      fetchApi<GitHubPullRequest[]>(`/github/prs${buildQs(params)}`),
+    commits: (params?: { staffId?: number; projectId?: number }) =>
+      fetchApi<GitHubCommit[]>(`/github/commits${buildQs(params)}`),
     status: () => fetchApi<SyncStatus>('/github/status'),
     sync: () => postApi<string>('/github/sync'),
   },
   workItems: {
-    list: (params?: { staffId?: number; projectId?: number }) => {
-      const qs = params
-        ? '?' + Object.entries(params).filter(([, v]) => v !== undefined).map(([k, v]) => `${k}=${v}`).join('&')
-        : '';
-      return fetchApi<WorkItem[]>(`/work-items${qs}`);
-    },
+    list: (params?: { staffId?: number; projectId?: number }) =>
+      fetchApi<WorkItem[]>(`/work-items${buildQs(params)}`),
   },
   risks: {
-    list: (params?: { staffId?: number; projectId?: number }) => {
-      const qs = params
-        ? '?' + Object.entries(params).filter(([, v]) => v !== undefined).map(([k, v]) => `${k}=${v}`).join('&')
-        : '';
-      return fetchApi<RiskAlert[]>(`/risks${qs}`);
-    },
+    list: (params?: { staffId?: number; projectId?: number }) =>
+      fetchApi<RiskAlert[]>(`/risks${buildQs(params)}`),
     resolve: (id: number) => postApi<RiskAlert>(`/risks/${id}/resolve`),
     scan: () => postApi<string>('/risks/scan'),
   },
