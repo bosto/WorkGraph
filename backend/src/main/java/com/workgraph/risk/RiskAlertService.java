@@ -80,7 +80,6 @@ public class RiskAlertService {
             boolean exists = riskAlertRepository.findByAlertTypeAndResolvedFalse(alertType)
                 .stream()
                 .anyMatch(a -> a.getWorkItem() != null
-                    && "JIRA".equals(a.getAlertType())
                     && issue.getId().equals(a.getWorkItem().getSourceId()));
 
             if (!exists) {
