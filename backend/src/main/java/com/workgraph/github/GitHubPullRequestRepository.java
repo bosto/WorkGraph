@@ -13,4 +13,5 @@ public interface GitHubPullRequestRepository extends JpaRepository<GitHubPullReq
     List<GitHubPullRequest> findByProjectId(Long projectId);
     List<GitHubPullRequest> findByGithubOwnerAndGithubRepo(String owner, String repo);
     List<GitHubPullRequest> findByState(String state);
+    Optional<GitHubPullRequest> findTopByOrderBySyncedAtDesc();
 }

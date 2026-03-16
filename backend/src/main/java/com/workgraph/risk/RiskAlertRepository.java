@@ -12,4 +12,5 @@ public interface RiskAlertRepository extends JpaRepository<RiskAlert, Long> {
     List<RiskAlert> findByProjectIdAndResolvedFalse(Long projectId);
     List<RiskAlert> findBySeverityAndResolvedFalse(RiskAlert.Severity severity);
     List<RiskAlert> findByAlertTypeAndResolvedFalse(String alertType);
+    boolean existsByAlertTypeAndTitleAndResolvedFalse(String alertType, String title);
 }

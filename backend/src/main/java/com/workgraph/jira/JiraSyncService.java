@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,9 +47,8 @@ public class JiraSyncService {
 
     public SyncStatus getStatus() {
         long total = jiraIssueRepository.count();
-        LocalDateTime lastSync = jiraIssueRepository.findAll().stream()
+        LocalDateTime lastSync = jiraIssueRepository.findTopByOrderBySyncedAtDesc()
             .map(JiraIssue::getSyncedAt)
-            .max(LocalDateTime::compareTo)
             .orElse(null);
         return new SyncStatus("JIRA", total, lastSync);
     }
@@ -98,9 +98,14 @@ public class JiraSyncService {
 
         while (hasMore) {
             try {
-                String url = "/rest/api/3/search?jql=" + jql + "&startAt=" + startAt + "&maxResults=" + maxResults;
+                String uri = UriComponentsBuilder.fromPath("/rest/api/3/search")
+                    .queryParam("jql", jql)
+                    .queryParam("startAt", startAt)
+                    .queryParam("maxResults", maxResults)
+                    .build()
+                    .toUriString();
                 @SuppressWarnings("unchecked")
-                Map<String, Object> response = client.get().uri(url)
+                Map<String, Object> response = client.get().uri(uri)
                     .retrieve().body(Map.class);
 
                 if (response == null) break;

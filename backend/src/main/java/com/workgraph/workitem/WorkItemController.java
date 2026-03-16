@@ -1,9 +1,10 @@
 package com.workgraph.workitem;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/work-items")
@@ -29,7 +30,7 @@ public class WorkItemController {
     @GetMapping("/{id}")
     public WorkItem getById(@PathVariable Long id) {
         return workItemRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("WorkItem not found: " + id));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "WorkItem not found: " + id));
     }
 
     @GetMapping("/{id}/events")

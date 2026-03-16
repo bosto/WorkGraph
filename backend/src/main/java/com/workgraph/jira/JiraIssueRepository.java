@@ -14,6 +14,7 @@ public interface JiraIssueRepository extends JpaRepository<JiraIssue, Long> {
     List<JiraIssue> findByAssigneeStaffId(Long staffId);
     List<JiraIssue> findByProjectId(Long projectId);
     List<JiraIssue> findByStatus(String status);
+    Optional<JiraIssue> findTopByOrderBySyncedAtDesc();
 
     @Query("SELECT j FROM JiraIssue j WHERE j.status NOT IN ('Done', 'Resolved', 'Closed') AND j.updatedAt < :staleThreshold")
     List<JiraIssue> findStaleIssues(LocalDateTime staleThreshold);

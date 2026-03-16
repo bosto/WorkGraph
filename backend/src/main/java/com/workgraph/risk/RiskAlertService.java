@@ -77,18 +77,14 @@ public class RiskAlertService {
 
         for (JiraIssue issue : staleIssues) {
             String alertType = "STALE_TICKET";
-            boolean exists = riskAlertRepository.findByAlertTypeAndResolvedFalse(alertType)
-                .stream()
-                .anyMatch(a -> a.getWorkItem() != null
-                    && issue.getId().equals(a.getWorkItem().getSourceId()));
-
-            if (!exists) {
+            String title = "Stale ticket: " + issue.getKey();
+            if (!riskAlertRepository.existsByAlertTypeAndTitleAndResolvedFalse(alertType, title)) {
                 RiskAlert alert = new RiskAlert();
                 alert.setAlertType(alertType);
                 alert.setSeverity(RiskAlert.Severity.MEDIUM);
                 alert.setStaff(issue.getAssigneeStaff());
                 alert.setProject(issue.getProject());
-                alert.setTitle("Stale ticket: " + issue.getKey());
+                alert.setTitle(title);
                 alert.setDetail("Ticket " + issue.getKey() + " has not been updated in over " + STALE_DAYS + " days. Status: " + issue.getStatus());
                 riskAlertRepository.save(alert);
             }

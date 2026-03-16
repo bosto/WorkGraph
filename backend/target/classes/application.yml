@@ -28,7 +28,7 @@ server:
   port: 8080
 
 jira:
-  base-url: ${JIRA_BASE_URL:https://your-org.atlassian.net}
+  base-url: ${JIRA_BASE_URL:}
   email: ${JIRA_EMAIL:}
   token: ${JIRA_TOKEN:}
 

@@ -28,8 +28,9 @@ async function getProjectData(id: number) {
   }
 }
 
-export default async function ProjectDetailPage({ params }: { params: { id: string } }) {
-  const id = parseInt(params.id);
+export default async function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idStr } = await params;
+  const id = parseInt(idStr);
   const data = await getProjectData(id);
 
   if (!data || !data.project) return notFound();

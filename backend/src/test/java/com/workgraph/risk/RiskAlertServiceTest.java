@@ -62,7 +62,7 @@ class RiskAlertServiceTest {
         issue.setUpdatedAt(LocalDateTime.now().minusDays(10));
 
         when(jiraIssueRepository.findStaleIssues(any())).thenReturn(List.of(issue));
-        when(riskAlertRepository.findByAlertTypeAndResolvedFalse("STALE_TICKET")).thenReturn(List.of());
+        when(riskAlertRepository.existsByAlertTypeAndTitleAndResolvedFalse("STALE_TICKET", "Stale ticket: PROJ-1")).thenReturn(false);
         when(riskAlertRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         riskAlertService.detectStaleTickets();

@@ -28,8 +28,9 @@ async function getStaffData(id: number) {
   }
 }
 
-export default async function StaffDetailPage({ params }: { params: { id: string } }) {
-  const id = parseInt(params.id);
+export default async function StaffDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: idStr } = await params;
+  const id = parseInt(idStr);
   const data = await getStaffData(id);
 
   if (!data || !data.member) return notFound();
